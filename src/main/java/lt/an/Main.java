@@ -16,7 +16,9 @@ public class Main {
             customers.forEach(System.out::println);
             System.out.println("----------------------------------------");
 
-            insertProductLine(con, "TestLine02", "TestDescription", "TestHtmlDescription");
+            insertProductLine(con, "TestLine04", "TestDescription5", "TestHtmlDescription5");
+
+            updateProductLine(con, "TestLine02","TestDescription04", "TestHtmlDescription03");
 
             System.out.println("----------------------------------------");
             ArrayList<ProductLine> productLines = getProductLine(con);
@@ -46,6 +48,26 @@ public class Main {
             System.out.println(e.getMessage());
         }
    }
+
+    private static void updateProductLine(
+            Connection con,
+            String productLine,
+            String textDescription,
+            String htmlDescription
+    ){
+
+        String sql = "UPDATE classicmodels.productlines SET textDescription = ?, htmlDescription = ? WHERE productLine = ?";
+
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, textDescription);
+            pstmt.setString(2, htmlDescription);
+            pstmt.setString(3, productLine);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     private static ArrayList<ProductLine> getProductLine(Connection con) throws SQLException {
 
