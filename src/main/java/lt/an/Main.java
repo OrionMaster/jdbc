@@ -16,7 +16,7 @@ public class Main {
             customers.forEach(System.out::println);
             System.out.println("----------------------------------------");
 
-            insertProductLine(con, "TestLine01", "TestDescription", "TestHtmlDescription");
+            insertProductLine(con, "TestLine02", "TestDescription", "TestHtmlDescription");
 
             System.out.println("----------------------------------------");
             ArrayList<ProductLine> productLines = getProductLine(con);
@@ -34,7 +34,7 @@ public class Main {
             String htmlDescription
     ){
 
-        String sql = "INSERT INTO productlines(productLine,textDescription, htmlDescription) VALUES(?,?,?)";
+        String sql = "INSERT INTO classicmodels.productlines(productLine,textDescription, htmlDescription) VALUES(?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, productLine);
@@ -51,7 +51,7 @@ public class Main {
 
         Statement stmt = con.createStatement();
 
-        ResultSet rs = stmt.executeQuery("select * from productLine");
+        ResultSet rs = stmt.executeQuery("select * from classicmodels.productlines");
 
         ArrayList<ProductLine> productLines = new ArrayList<>();
 
