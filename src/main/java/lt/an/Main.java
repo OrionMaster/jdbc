@@ -14,11 +14,58 @@ public class Main {
             ArrayList<Customer> customers = getCustomers(con);
 
             customers.forEach(System.out::println);
+            System.out.println("----------------------------------------");
+
+            insertProductLine(con, "TestLine01", "TestDescription", "TestHtmlDescription");
+
+            System.out.println("----------------------------------------");
+            ArrayList<ProductLine> productLines = getProductLine(con);
+            productLines.forEach(System.out::println);
 
             } catch (Exception e){
                 System.out.println(e);
             }
         }
+
+    private static void insertProductLine(
+            Connection con,
+            String productLine,
+            String textDescription,
+            String htmlDescription
+    ){
+
+        String sql = "INSERT INTO productlines(productLine,textDescription, htmlDescription) VALUES(?,?,?)";
+
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, productLine);
+            pstmt.setString(2, textDescription);
+            pstmt.setString(3, htmlDescription);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+   }
+
+    private static ArrayList<ProductLine> getProductLine(Connection con) throws SQLException {
+
+        Statement stmt = con.createStatement();
+
+        ResultSet rs = stmt.executeQuery("select * from productLine");
+
+        ArrayList<ProductLine> productLines = new ArrayList<>();
+
+        while (rs.next()) {
+            String productLineName = rs.getString("productLine");
+            String textDescription = rs.getString("textDescription");
+            String htmlDescription = rs.getString("htmlDescription");
+
+            ProductLine productLine = new ProductLine(productLineName, textDescription, htmlDescription);
+            productLines.add(productLine);
+
+        }
+        return productLines;
+    }
 
     private static ArrayList<Customer> getCustomers(Connection con) throws SQLException {
 
