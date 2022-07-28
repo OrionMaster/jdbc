@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 public class Main {
+    static Connection con = null;
+
     public static void main(String[] args) {
 
-        try (Connection con = getConnection()) {
+       try {
+            con = getConnection();
+
             ArrayList<Customer> customers = getCustomers(con);
 
             customers.forEach(System.out::println);
@@ -18,16 +22,26 @@ public class Main {
 
             insertProductLine(con, "TestLine04", "TestDescription5", "TestHtmlDescription5");
 
-            updateProductLine(con, "TestLine02","TestDescription04", "TestHtmlDescription03");
+           updateProductLine(con, "TestLine02","TestDescription04", "TestHtmlDescription03");
 
             System.out.println("----------------------------------------");
             ArrayList<ProductLine> productLines = getProductLine(con);
             productLines.forEach(System.out::println);
 
+            //1st STEP
+            con.commit();
+
             } catch (Exception e){
                 System.out.println(e);
+            try {
+                //3rd STEP
+                getConnection().rollback();
+            }catch (SQLException e1){
+                throw new RuntimeException();
             }
+
         }
+    }
 
     private static void insertProductLine(
             Connection con,
@@ -44,8 +58,11 @@ public class Main {
             pstmt.setString(3, htmlDescription);
             pstmt.executeUpdate();
 
+
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+
         }
    }
 
@@ -66,7 +83,15 @@ public class Main {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+
     }
 
     private static ArrayList<ProductLine> getProductLine(Connection con) throws SQLException {
@@ -121,8 +146,12 @@ public class Main {
 
         try {
             con = DriverManager.getConnection(url, username, password);
+            //2nd STEP
+            con.setAutoCommit(false);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
+
         }
         return con;
     }
