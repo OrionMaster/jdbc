@@ -1,20 +1,36 @@
 package lt.an;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
 
+        Properties props = new Properties();
 
         try {
-            //   Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/classicmodels", "root", "M_as4ter1");
+            FileInputStream fileInputStream = new FileInputStream("db.properties");
+            props.load(fileInputStream);
 
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+
+        String url = props.getProperty("db.url");
+        String username = props.getProperty("db.username");
+        String password = props.getProperty("db.password");
+
+        try {
+            Connection con = DriverManager.getConnection(url, username, password);
             Statement stmt = con.createStatement();
 
             ResultSet rs = stmt.executeQuery("select * from customers");
@@ -29,7 +45,6 @@ public class Main {
 
                 Customer customer = new Customer( customerNumber, customerName, customerPhone, customerCity);
                 customers.add(customer);
- //                   System.out.println(String.format("%s | %s | %s | %s", customerNumber, customerName, customerCity, customerPhone));
 
                 }
 
