@@ -48,7 +48,7 @@ public class Main {
             String productLine,
             String textDescription,
             String htmlDescription
-    ){
+    ) throws SQLException {
 
         String sql = "INSERT INTO classicmodels.productlines(productLine,textDescription, htmlDescription) VALUES(?,?,?)";
 
@@ -58,11 +58,6 @@ public class Main {
             pstmt.setString(3, htmlDescription);
             pstmt.executeUpdate();
 
-
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
         }
    }
 
@@ -71,7 +66,7 @@ public class Main {
             String productLine,
             String textDescription,
             String htmlDescription
-    ){
+    ) throws SQLException {
 
         String sql = "UPDATE classicmodels.productlines SET textDescription = ?, htmlDescription = ? WHERE productLine = ?";
 
@@ -81,18 +76,10 @@ public class Main {
             pstmt.setString(3, productLine);
             pstmt.executeUpdate();
 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            try {
-                if (con != null) {
-                    con.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+        }
         }
 
-    }
+
 
     private static ArrayList<ProductLine> getProductLine(Connection con) throws SQLException {
 
